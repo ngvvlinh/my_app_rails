@@ -3,7 +3,17 @@ class ArticlesController < ApplicationController
 
   # GET /articles or /articles.json
   def index
-    @articles = Article.all
+
+    @articles = Article.search(params[:search])
+    #@articles = Article.all
+  end
+
+  def search
+    @article = Article.search(params[:search])
+    respond_to do |format|
+      format.js  { render :partial => "elements/livesearch", :locals => {:search => @article, :query => params[:search]} }
+      format.html    { render :index }
+    end
   end
 
   # GET /articles/1 or /articles/1.json
@@ -66,4 +76,9 @@ class ArticlesController < ApplicationController
     def article_params
       params.require(:article).permit(:title, :body)
     end
+
+    def article_search
+      params.require(:article).permit(:title, :id, :search)
+    end
+
 end
